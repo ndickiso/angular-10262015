@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+
+				<select ng-model="selectedPlane"
+					ng-options="plane.code as plane.name for plane in planes">
+					<option value="">Select One</option>
+				</select>
+
+				<div ng-switch on="selectedPlane">
+					<div ng-switch-when="gs">
+						Gulf Stream's are amazing!
+					</div>
+					<div ng-switch-when="cs">
+						Cessna's are amazing!
+					</div>
+					<div ng-switch-when="fa">
+						Falcon's are amazing!
+					</div>
+					<div ng-switch-when="bo">
+						Bombardier's are amazing!
+					</div>
+					<div ng-switch-default>
+						Select an Amazing Plane!
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<script>
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($scope) {
+
+					$scope.planes = [
+						{ code: "gs", name: "Gulf Stream" },
+						{ code: "cs", name: "Cessna" },
+						{ code: "fa", name: "Falcon" },
+						{ code: "bo", name: "Bombardier" },
+					];
+
+				});
+
+		</script>
+	</body>
+</html>

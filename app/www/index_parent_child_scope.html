@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="ParentCtrl">
+				Parent Message: {{o.message}}<br>
+				Parent Message: <input ng-model="o.message">
+				<div ng-controller="ChildCtrl">
+					Child Message: {{o.message}}<br>
+					Child Message: <input ng-model="o.message">
+				</div>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.controller("ParentCtrl", function($scope) {
+					$scope.o = {};
+				})
+				.controller("ChildCtrl", function($scope) {
+				});
+
+		</script>
+	</body>
+</html>

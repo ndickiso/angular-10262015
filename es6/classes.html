@@ -1,0 +1,45 @@
+<script>
+
+"use strict";
+
+function Person(firstName, lastName) {
+
+	var _firstName, _lastName;
+
+	return new class Person {
+
+		constructor() {
+			_firstName = firstName;
+			_lastName = lastName;
+		}
+
+		get firstName() {
+			return _firstName;
+		}
+
+		set firstName(value) {
+			_firstName = value;
+		}
+
+		get lastName() {
+			return _lastName;
+		}
+
+		set lastName(value) {
+			_lastName = value;
+		}
+
+		getFullName() {
+			return this.firstName + " " + this.lastName;
+		}
+
+	};
+
+
+}
+
+var p = new Person("Bob", "Smith");
+console.log(p.getFullName());
+console.dir(p);
+
+</script>

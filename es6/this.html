@@ -1,0 +1,23 @@
+<script>
+
+	"use strict";
+
+	function myFunc() {
+
+		var that = this;
+
+		function innerFunc() {
+			console.dir(that);
+		}
+
+		innerFunc();
+
+	}
+
+	var o = {
+		myFunc: myFunc
+	};
+
+	o.myFunc()
+
+</script>

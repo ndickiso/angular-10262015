@@ -1,0 +1,56 @@
+<script>
+function Person(firstName, lastName) {
+
+	var _firstName, _lastName;
+
+	_firstName = firstName;
+	_lastName = lastName;
+
+	Object.defineProperty(this, "firstName", {
+		configurable: false,
+		enumerable: true,
+		get: function() {
+			console.log("getting first name");
+			return _firstName;
+		},
+		set: function(value) {
+			_firstName = value;
+		}
+	});
+
+	Object.defineProperty(this, "lastName", {
+		configurable: false,
+		enumerable: true,
+		get: function() {
+			console.log("getting last name");
+			return _lastName;
+		},
+		set: function(value) {
+			_lastName = value;
+		}
+	});
+
+}
+
+Person.prototype.getFullName = function() {
+	return this.firstName + " " + this.lastName;
+}
+
+
+function Employee(empId, firstName, lastName) {
+	this.empId = empId;
+	this._super.call(this, firstName, lastName);
+}
+
+Employee.prototype = Object.create(Person.prototype);
+Employee.prototype.constructor = Employee;
+Employee.prototype._super = Person;
+
+Employee.prototype.getEmpInfo = function() {
+	return this.empId + " " + this.lastName + ", " + this.firstName;
+}
+
+var e = new Employee(1, "Bob", "Smith");
+console.log(e.getEmpInfo());
+console.dir(e);
+</script>

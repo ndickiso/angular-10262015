@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<div>Color Filter: <input ng-model="colorFilter"></div>
+				<div>New Color: <input ng-model="newColor"> <button ng-click="addColor()">Add Color</button>
+				<ul>
+					<li ng-repeat="color in (colors | filter:colorFilter | orderBy:'toString()':true) track by $index">{{color}}</li>
+				</ul>
+				<div><input ng-model='applyCodeFilter' type="checkbox"> Code Filter: <input ng-model="codeFilter"></div>
+				<div><input ng-model='applyNameFilter' type="checkbox"> Name Filter: <input ng-model="nameFilter"></div>
+				<div><input ng-model='applyLevelFilter' type="checkbox"> Level Filter: <input ng-model="levelFilter"></div>
+				<ul>
+					<li ng-repeat="product in products | filter:productFilter">
+						{{product.id}} {{product.code}} - {{product.name}}
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script>
+
+			String.prototype.capitalizeFirstLetter = function() {
+			    return this.charAt(0).toUpperCase() + this.slice(1);
+			}
+
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($scope) {
+					$scope.colors = [
+						"green", "white", "saffron", "red", "blue", "black", "brown"
+					];
+
+					$scope.productFilter = function(product) {
+
+						var atLeastOneFilter = false;
+						var result = false;
+
+						for (var prop in product) {
+
+							if ($scope["apply" + prop.capitalizeFirstLetter() + "Filter"]) {
+								atLeastOneFilter = true;
+								break;
+							}
+
+						}
+
+						if (!atLeastOneFilter) {
+							return true;
+						}
+
+						for (var prop in product) {
+
+							if ($scope["apply" + prop.capitalizeFirstLetter() + "Filter"] && !result) {
+								result = product[prop] === $scope[prop + "Filter"];
+							}
+
+						}
+
+						return result;
+					};
+
+					$scope.addColor = function() {
+						$scope.colors.push($scope.newColor);
+					};
+
+					$scope.products = [
+						{ id: 1, name: "Flight Planning", code: "FP", level: "Secret" },
+						{ id: 2, name: "Flight Messaging", code: "FM", level: "Top Secret" },
+						{ id: 3, name: "Flight Safety", code: "FS", level: "Top Secret" },
+						{ id: 4, name: "Flight Safety 2", code: "FS", level: "Confidental" }
+					];
+				});
+
+		</script>
+	</body>
+</html>

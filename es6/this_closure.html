@@ -1,0 +1,26 @@
+<script>
+
+	"use strict";
+
+	function myFunc(a, b, c) {
+
+		console.dir(this);
+		console.dir(arguments);
+	}
+
+	var o = {
+		id: 2,
+		myFunc: myFunc
+	};
+
+	myFunc();
+	window.myFunc();
+	o.myFunc();
+	myFunc.call({ id: 3}, 1, 2, 3);
+	myFunc.apply({ id: 3}, [1, 2, 3]);
+	var fn = myFunc.bind({ id: 4});
+	fn.call({id: 5});
+
+	console.log(o.myFunc === window.myFunc);
+
+</script>

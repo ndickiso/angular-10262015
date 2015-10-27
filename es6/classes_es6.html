@@ -1,0 +1,47 @@
+<script>
+
+"use strict";
+
+class Person {
+
+	constructor(firstName, lastName) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	get firstName() {
+		return this._firstName;
+	}
+
+	set firstName(value) {
+		this._firstName = value;
+	}
+
+	getFullName() {
+		return this.firstName + " " + this.lastName;
+	}
+
+}
+
+class Employee extends Person {
+
+	constructor(empId, firstName, lastName) {
+		super(firstName, lastName);
+		this.empId = empId;
+	}
+
+	getEmpInfo() {
+		return this.empId + " " + this.lastName + ", " + this.firstName;
+	}
+
+}
+
+console.dir(Employee);
+
+var p = new Person("Bob", "Smith");
+console.log(p.getFullName());
+console.dir(p);
+
+
+
+</script>
