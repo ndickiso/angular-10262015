@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div my-dir>
+				<h1>{{message}}</h1>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("myDir", function() {
+
+					return {
+						transclude: true,
+						//template: "Hi Everybody!<div ng-transclude></div><div ng-transclude></div><div ng-transclude></div>",
+						link: function(scope, element, attrs, ctrl, transclude) {
+							scope.message = "Time for lunch!";
+
+							transclude(function(clone) {
+								element.append(clone);
+							});
+							transclude(function(clone) {
+								element.append(clone);
+							});
+							transclude(function(clone) {
+								element.append(clone);
+							});
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "Hello World!";
+
+				});
+
+		</script>
+	</body>
+</html>
