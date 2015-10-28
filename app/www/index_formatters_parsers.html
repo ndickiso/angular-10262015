@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<form name="contactForm" novalidate>
+					<div>Model Prop: {{personName}}</div>
+					<div>Name 1: <input ng-model="personName" rc-test="name1"></div>
+					<div>Name 2: <input ng-model="personName" rc-test="name2"></div>
+					<button type="button" ng-click="showScope()">Submit</button>
+				</form>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("rcTest", function() {
+
+					return {
+						require: "ngModel",
+						link: function(scope, element, attrs, ctrl) {
+
+							ctrl.$formatters.push(function(value) {
+								console.log("formatter: " + attrs.rcTest);
+								return String(value).toUpperCase();
+							});
+
+							ctrl.$parsers.push(function(value) {
+								console.log("parser: " + attrs.rcTest);
+								return value;
+							});
+
+						}
+					};
+
+				})
+
+				.directive("rcMin", function() {
+
+					return {
+						require: "ngModel",
+						link: function(scope, element, attrs, ctrl) {
+
+							var minLength = parseInt(attrs.rcMin, 10);
+
+							function validate(value) {
+
+								if (value == null || String(value).length < minLength) {
+									ctrl.$setValidity("rc-min", false);
+									return;
+								} else {
+									ctrl.$setValidity("rc-min", true);
+								}
+
+								return value;
+
+							}
+
+							ctrl.$formatters.push(validate);
+							ctrl.$parsers.push(validate);
+						}
+					};
+
+				})
+
+				.directive("rcRequired", function() {
+
+					// directive definition object
+					return {
+						require: "ngModel",
+						link: function(scope, element, attrs, ctrl) {
+
+							function validate(value) {
+								if (value == null || String(value).length === 0) {
+									ctrl.$setValidity("rc-required", false);
+									return;
+								} else {
+									ctrl.$setValidity("rc-required", true);
+								}
+								return value;
+							}
+
+							ctrl.$formatters.push(validate);
+							ctrl.$parsers.push(validate);
+
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope, $rootScope) {
+
+					$rootScope.$watch(function() {
+						console.log("$digest on root scope");
+					});
+
+					$scope.$watch(function() {
+
+						console.log("$digest is running");
+
+					});
+
+					$scope.showScope = function() {
+						console.dir($scope);
+					};
+
+				});
+
+		</script>
+	</body>
+</html>

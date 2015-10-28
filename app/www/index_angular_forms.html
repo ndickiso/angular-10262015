@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<style>
+
+			input.ng-touched.ng-invalid {
+				border:20px solid red;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<form name="contactForm" novalidate>
+					<div>
+						<label>
+							Email Address
+							<input type="email" id="emailAddress" name="emailAddress" required ng-model="contact.emailAddress">
+							<!--<span ng-show="contactForm.emailAddress.$invalid">
+								ENTER YOUR EMAIL ADDRESS NOW!
+							</span> -->
+						</label>
+					</div>
+					<div>
+						<label>
+							Send Me Newsletters
+							<input type="checkbox" id="sendMeNewletters" name="sendMeNewletters" ng-model="contact.sendMeNewletters">
+						</label>
+					</div>
+					<div>
+						<fieldset>
+							<legend>Gender</legend>
+							<label>
+								<input type="radio" name="gender" ng-model="contact.gender" value="male"> Male
+							</label>
+							<label>
+								<input type="radio" name="gender" ng-model="contact.gender" value="female"> Female
+							</label>
+						</fieldset>
+					</div>
+					<div>
+						<label>
+							Occupation:
+							<select ng-options="occupation.id as occupation.title group by occupation.jobType for occupation in occupations" ng-model="contact.occupation" name="occupation">
+								<option value="">Select One</option>
+							</select>
+						</label>
+					</div>
+					<div>
+						<label>
+							Comments:
+							<textarea ng-model="contact.comments" rows="5" cols="60" name="comments"></textarea>
+						</label>
+					</div>
+					<button type="button" ng-click="showScope()">Submit</button>
+				</form>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($scope) {
+					$scope.occupations = [
+						{ id: 1, title: "Software Developer", jobType: "White Collar" },
+						{ id: 2, title: "Construction", jobType: "Blue Collar" },
+						{ id: 3, title: "Debater", jobType: "White Collar" },
+						{ id: 4, title: "Artist", jobType: "White Collar" },
+						{ id: 5, title: "Truck Driver", jobType: "Blue Collar" }
+					];
+
+					$scope.showScope = function() {
+						console.dir($scope);
+					};
+
+				});
+
+		</script>
+	</body>
+</html>

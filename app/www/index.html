@@ -3,27 +3,46 @@
 <html>
 	<head>
 		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
 	</head>
 
 	<body>
-		<div id="my-app">
-			<div ng-controller="ParentCtrl">
-				Parent Message: {{o.message}}<br>
-				Parent Message: <input ng-model="o.message">
-				<div ng-controller="ChildCtrl">
-					Child Message: {{o.message}}<br>
-					Child Message: <input ng-model="o.message">
-				</div>
+		<div ng-app="MyApp">
+			<div my-dir>
+				<h1>{{message}}</h1>
 			</div>
 		</div>
-		<!--
-		<script src="libs/jquery/dist/jquery.js"></script>
-		<script src="libs/angular/angular.js"></script>
-		<script src="js/app_init.js"></script>
-		<script src="js/controllers/parent_ctrl.js"></script>
-		<script src="js/controllers/child_ctrl.js"></script>
-		<script src="js/app.js"></script>
-		-->
-		<script src="js/site.min.gz.js"></script>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("myDir", function() {
+
+					return {
+						transclude: true,
+						//template: "Hi Everybody!<div ng-transclude></div><div ng-transclude></div><div ng-transclude></div>",
+						link: function(scope, element, attrs, ctrl, transclude) {
+							scope.message = "Time for lunch!";
+
+							transclude(function(clone) {
+								element.append(clone);
+							});
+							transclude(function(clone) {
+								element.append(clone);
+							});
+							transclude(function(clone) {
+								element.append(clone);
+							});
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "Hello World!";
+
+				});
+
+		</script>
 	</body>
 </html>

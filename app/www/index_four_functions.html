@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div my-dir></div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("myDir", function() {
+
+					// directive definition object
+					return {
+						compile: function(tElement, tAttrs) {
+
+							return {
+								// pre-link
+								pre: function(scope, element, attrs) {
+								},
+								// post-link
+								post: function(scope, element, attrs) {
+									element.html("Hello World");
+								}
+							};
+						}
+					};
+
+				})
+				// directive definition object with link
+				// .directive("myDir", function() {
+				//
+				// 	// directive definition object
+				// 	return {
+				// 		// post-link
+				// 		link: function(scope, element, attrs) {
+				// 			element.html("Hello World");
+				// 		}
+				// 	};
+				//
+				// })
+				// return post-link only
+				// .directive("myDir", function() {
+				//
+				// 	// post-link
+				// 	return function(scope, element, attrs) {
+				//		element.html("Hello World");
+				// 	};
+				//
+				// })
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "Hello World!";
+
+				});
+
+		</script>
+	</body>
+</html>

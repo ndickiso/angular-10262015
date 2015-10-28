@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<script src="libs/angular-messages/angular-messages.js"></script>
+		<style>
+
+			input.ng-touched.ng-invalid {
+				border:2px solid red;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<div ng-messages="contactForm.personName.$error">
+					<div ng-message="required">Please enter a name.</div>
+				</div>
+				<div>
+					<div ng-show="contactForm.personName.$error.required">Please enter a name.</div>
+				</div>
+				<form name="contactForm" novalidate>
+					<div>Name: <input ng-model="person.name" name="personName" required></div>
+					<button type="button" ng-click="showScope()">Submit</button>
+				</form>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", ["ngMessages"])
+				.controller("MyCtrl", function($scope, $rootScope) {
+					$scope.showScope = function() {
+						console.dir($scope);
+					};
+
+				});
+
+		</script>
+	</body>
+</html>

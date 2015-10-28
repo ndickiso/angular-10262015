@@ -1,0 +1,36 @@
+<script>
+
+	"use strict";
+
+	function myFunc() {
+		console.log(this);
+
+		// var g = function r(x) {
+		// 	console.log(this);
+		// 	console.log(x)
+		// };
+		//
+		// return g.bind(this);
+
+		return x => {
+		 	console.log(this);
+			console.log(x);
+		};
+
+	}
+
+	var o = {
+		id:1,
+		f: myFunc
+	};
+
+	var o2 = {
+		id:2,
+		r: o.f()
+	};
+
+	o2.r(4);
+	console.log(typeof r);
+
+
+</script>

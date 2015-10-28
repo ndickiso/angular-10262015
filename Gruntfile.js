@@ -85,9 +85,40 @@ module.exports = function(grunt) {
 		var
 			http = require("http"),
 			express = require("express"),
+			bodyParser = require("body-parser"),
 			app = express(),
-			webServerConfig = grunt.config("webServer");
+			webServerConfig = grunt.config("webServer"),
+			widgets = [
+				{ id: 1, name: "Widget 1", qty: 10 },
+				{ id: 2, name: "Widget 2", qty: 13 },
+				{ id: 3, name: "Widget 3", qty: 12 },
+				{ id: 4, name: "Widget 4", qty: 8 }
+			];
 
+		app.use("/api", bodyParser.json());
+
+		app.get("/api/widgets", function(req, res) {
+
+			res.json(widgets);
+
+		});
+
+		app.get("/api/widgets/:widgetId", function(req, res) {
+
+			res.json(widgets.filter(function(widget) {
+					return widget.id === req.params.widgetId;
+			})[0]);
+
+		});
+
+		app.post("/api/widgets", function(req, res) {
+
+			// res.json(widgets.filter(function(widget) {
+			// 		return widget.id === req.params.widgetId;
+			// })[0]);
+			res.end();
+
+		});
 
 		app.use("/js", express.static(jsFolder, {
 			setHeaders: function(res, filePath) {

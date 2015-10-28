@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<script src="libs/angular-messages/angular-messages.js"></script>
+		<script src="libs/angular-resource/angular-resource.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", ["ngMessages","ngResource"])
+				.controller("MyCtrl", function($scope, $timeout, $resource) {
+
+					var Widgets = $resource('/api/widgets/:widgetId', {widgetId:'@id'});
+					$scope.widget = Widgets.get({widgetId:1});
+					$timeout(function() {
+						console.dir($scope.widget);
+					},1000);
+
+				});
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<script src="libs/angular-messages/angular-messages.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+
+				<input ng-model="message">
+				<br><br>
+				{{message}}
+				<br><br>
+				<input ng-model="message2">
+
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", ["ngMessages"])
+				.controller("MyCtrl", function($scope, $timeout) {
+					$scope.message = "Brandon loves Steak!";
+					$scope.message2 = "Aaron loves Burgers!";
+
+					$timeout(function() {
+						console.log("timeout expired");
+						$scope.message = "Kemgadi loves Kabobs!";
+
+
+						console.dir($scope);
+					},2000, false);
+
+				});
+
+		</script>
+	</body>
+</html>

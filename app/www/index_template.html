@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div my-dir></div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.factory("templateHelper", function(VersionHash) {
+					return {
+						getUrl : function(templateFileName) {
+							return `partials/${templateFileName}?v=${VersionHash}`;
+						}
+					}
+				})
+				.directive("myDir", function(templateHelper) {
+
+					return {
+						//template: "<h1>{{message}}</h1>",
+						templateUrl: templateHelper.getUrl("test.html"),
+						link: function(scope, element, attrs) {
+							scope.message = "Hi Class!";
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "Hello World!";
+
+				})
+				.constant("VersionHash", "KDSFS2323AQ")
+				.run(function($templateCache, templateHelper) {
+
+					//$templateCache.put(templateHelper.getUrl("test.html"), "<h1>{{message}}</h1>");
+
+
+				});
+
+		</script>
+	</body>
+</html>
