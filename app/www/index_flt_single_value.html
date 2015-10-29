@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<input ng-model="message">
+				{{message | rcUpperCase | rcAppend:'!!!'}}
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.filter("rcUpperCase", function($log) {
+
+					return function(value) {
+						$log.log(value);
+						return String(value).toUpperCase();
+					};
+
+				})
+				.filter("rcAppend", function() {
+
+					return function(value, strToAppend) {
+						return String(value) + String(strToAppend);
+					}
+
+				})
+				.controller("MyCtrl", function($scope, $filter) {
+					$scope.message = "hi";
+
+					console.log(
+						$filter("rcUpperCase")("some lower case text"));
+				});
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<ul>
+					<li ng-repeat="num in numberOfNumbers | evens | greaterThan10 |limit:10">{{num}}</li>
+				</ul>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.filter("evens", function() {
+
+					function* getEvens(numberOfNumbers) {
+
+						var numberCount = 0;
+						var currentNumber = 0;
+						while (numberCount < numberOfNumbers) {
+							currentNumber++;
+							if (currentNumber % 2 === 0) {
+								numberCount++;
+								yield currentNumber;
+							}
+						}
+
+					}
+
+					return function(numberOfNumbers) {
+
+						var list = [];
+
+						for (var evenNumber of getEvens(numberOfNumbers)) {
+							list.push(evenNumber);
+						}
+
+						return list;
+					};
+
+				})
+				.controller("MyCtrl", function($scope, $filter) {
+					$scope.numbers = [0,1,2,3,4,5,6,7,8];
+
+					$scope.numberOfNumbers = 100;
+				});
+
+		</script>
+	</body>
+</html>

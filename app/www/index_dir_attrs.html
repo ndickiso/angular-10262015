@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<input ng-model="message">
+				<div id="2" my-dir="{{message}}" data-custom="something else"></div>
+			</div>
+		</div>
+
+		<script>
+
+      var socket = io();
+
+			socket.emit("log", "test message");
+
+
+			angular.module("MyApp", [])
+				.directive("myDir", function() {
+
+					return {
+						link: function(scope, element, attrs) {
+
+							console.dir(attrs);
+
+							attrs.$addClass("active");
+							attrs.$removeClass("active");
+							attrs.$set("data-name", "bob");
+
+							console.log(attrs.$normalize("data-first-name"));
+
+							attrs.$observe("myDir", function(newValue) {
+								console.log(newValue);
+							});
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "A message";
+				});
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			function dataSvc() {
+
+				this.doSomething = function() {
+					console.log("do something");
+				};
+
+			}
+
+			angular.module("MyApp", [])
+				.factory("Data1Factory", function() {
+
+					// return {
+					// 	doSomething: function() {
+					// 		console.log("do something");
+					// 	}
+					// };
+
+					return new dataSvc();
+
+				})
+				.service("Data2", dataSvc)
+				.provider("Data3", ["$logProvider", function($logProvider) {
+
+					var prefix = "";
+
+					// provider method
+					return {
+
+						setPrefix: function(newPrefix) {
+							prefix = newPrefix;
+						},
+
+						// factory method
+						$get: ["$log", function($log) {
+
+							// service method
+							//return new dataSvc();
+
+							return {
+								log: function(msg) {
+									console.log(prefix + msg);
+								}
+							};
+
+						}]
+
+					}
+
+				}])
+				.config(["Data3Provider", function(Data3Provider) {
+					Data3Provider.setPrefix("MyApp> ");
+				}])
+				.config(["$provide", function($provide) {
+
+					$provide.decorator("$log", ["$delegate", function($delegate) {
+
+						var originalLog = $delegate.log;
+
+						$delegate.log = function(msg) {
+							originalLog("MyApp> " + msg);
+						};
+
+						//return $delegate;
+
+					}]);
+
+				}])
+				.controller("MyCtrl", ["$scope", "$filter", "Data3", "$log",
+					function($scope, $filter, Data, $log) {
+
+						//Data.log("I like ice cream!");
+						$log.log("I like ice cream!");
+					}]);
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<script src="socket.io/socket.io.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+      var socket = io();
+
+			socket.emit("log", "test message");
+
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "A message";
+				});
+
+		</script>
+	</body>
+</html>

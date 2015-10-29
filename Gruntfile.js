@@ -95,6 +95,9 @@ module.exports = function(grunt) {
 				{ id: 4, name: "Widget 4", qty: 8 }
 			];
 
+		var server = http.createServer(app);
+		var io = require('socket.io')(server);
+
 		app.use("/api", bodyParser.json());
 
 		app.get("/api/widgets", function(req, res) {
@@ -131,17 +134,25 @@ module.exports = function(grunt) {
 
 		app.use(express.static(webServerConfig.rootFolder));
 
-		//this.async();
 
-		http.createServer(app)
-			.listen(webServerConfig.port, function() {
+		io.on('connection', function(socket){
 
-				console.log("web server started on port: " +
-					webServerConfig.port);
-
+			socket.on("log", function(msg) {
+				console.log(msg);
 			});
 
+		});
+
+		server.listen(webServerConfig.port, function() {
+
+			console.log("web server started on port: " +
+				webServerConfig.port);
+
+		});
+
 	});
+
+
 
 	grunt.registerTask("default", "standard dev task",
 		["uglify:combine", "uglify:minify", "compress:js", "web-server", "watch"])

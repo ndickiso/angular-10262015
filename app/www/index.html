@@ -9,41 +9,80 @@
 
 	<body>
 		<div ng-app="MyApp">
-			<div ng-controller="MyCtrl">
-				MyCtrl: {{message}}
-				<div my-dir="message" one-way="{{message | uppercase}}" rc-click="doSomething()"></div>
+			<div ng-controller="BrotherCtrl">
+				Brother: <input ng-model="message"
+					rc-model-change="triggerNewMessage(msg)">
+			</div>
+			<div ng-controller="SisterCtrl">
+				Sister: {{message}}
 			</div>
 		</div>
-
 		<script>
-
 			angular.module("MyApp", [])
-				.directive("myDir", function() {
+				.directive("rcModelChange", function() {
 
 					return {
 						scope: {
-							msg: "=myDir",
-							upperMsg: "@oneWay",
-							clickMe: "&rcClick"
+							triggerChange: "&rcModelChange"
 						},
-						template: "MyDir: {{msg}}<br><input ng-model='msg'><br>{{upperMsg}}<button ng-click='clickMe()'>Click Me</button>",
-						link: function(scope, element, attrs) {
-							console.log("MyDir Link: " + scope.$id);
-							console.log("MyDir Link Parent Scope: " + scope.$parent.$id);
+						require: "ngModel",
+						link: function(scope, element, attrs, ctrl) {
+
+							function notify(value) {
+								//scope[attrs.rcModelChange](value);
+								console.dir(scope.triggerChange);
+								scope.triggerChange({ msg: value });
+								return value;
+							}
+
+							ctrl.$formatters.shift(notify);
+							ctrl.$parsers.push(notify);
+
 						}
 					};
 
 				})
-				.controller("MyCtrl", function($scope) {
-					$scope.message = "Blimp";
-					console.log("MyCtrl Scope Id: " + $scope.$id);
+				.factory("EventsChannel", function($rootScope) {
 
-					$scope.doSomething = function() {
-						console.log("I did it!");
+					var events = [];
+
+					return {
+						on: function(eventName, eventHandler) {
+							if (!events[eventName]) {
+								events[eventName] = [];
+							}
+							events[eventName].push(eventHandler);
+						},
+
+						trigger: function(eventName, eventData) {
+							if (events[eventName]) {
+								events[eventName].forEach(function(eventHandler) {
+									$rootScope.$applyAsync(function() {
+										eventHandler(eventData);
+									});
+								});
+							}
+						}
 					};
 
-				});
+				})
+				.controller("BrotherCtrl", ["$scope", "EventsChannel",
+					function($scope, EventsChannel) {
 
+						$scope.triggerNewMessage = function(newValue) {
+							EventsChannel.trigger("newMessage", newValue);
+						};
+
+
+					}])
+				.controller("SisterCtrl", ["$scope", "EventsChannel",
+					function($scope, EventsChannel) {
+
+						EventsChannel.on("newMessage", function(msg) {
+							$scope.message = msg;
+						})
+
+					}]);
 		</script>
 	</body>
 </html>

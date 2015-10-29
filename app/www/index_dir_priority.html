@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<div rc-repeat="5" rc-dir></div>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("rcRepeat", function($compile) {
+
+					return {
+						priority: 1000,
+						terminal: true,
+						controller: function() {
+							console.log("rcrepeat");
+						},
+						compile: function(tElement, tAttrs) {
+
+							var tpl = tElement[0].outerHTML;
+							var parentElement = tElement.parent();
+							var pri = this.priority;
+
+							tElement.remove();
+
+							return function(scope, element, attrs) {
+
+								var count = parseInt(attrs.rcRepeat,10);
+
+								while(count--) {
+									parentElement.append($compile(tpl, null, pri)(scope));
+								}
+
+							};
+						}
+
+					}
+
+				})
+				.directive("rcDir", function() {
+
+					return {
+						controller: function() {
+							console.log("rcdir")
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.message = "A message";
+				});
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<ul>
+					<li ng-repeat="car in cars">{{car.year}}</li>
+				</ul>
+				<rc-grid ng-model="cars"></rc-grid>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("rcGrid", function() {
+
+					return {
+						restrict: "E",
+						require: "ngModel",
+						scope: {},
+						template:
+`<table>
+	<thead><tr>
+		<th>Id</th>
+		<th>Make</th>
+		<th>Model</th>
+		<th>Year</th>
+		<th>Action</th>
+	</tr></thead>
+	<tbody>
+		<tr ng-repeat='car in cars'>
+			<td col='id'>{{car.id}}</td>
+			<td col='make'>{{car.make}}</td>
+			<td col='model'>{{car.model}}</td>
+			<td col='year'>{{car.year}}</td>
+			<td><button data-edit-button>Edit</button></td>
+		</tr>
+	</tbody>
+</table>`,
+						link: function(scope, element, attrs, ctrl) {
+
+							var rowId = -1;
+
+							ctrl.$render = function() {
+								scope.cars = ctrl.$viewValue;
+							};
+
+							var tBody = element.find("tbody");
+							tBody.on("click", "button[data-edit-button]", function(e) {
+
+								var tr = $(e.target).closest("tr");
+
+								rowId = parseInt(tr.find("td:first-child").text(), 10);
+
+								tr.find("td:not(:last-child)")
+									.each(function(index, element) {
+										var element = $(element);
+										var value = element.text();
+										element.html("<input type='text' value='" + value + "'>");
+								});
+								var actionTd = tr.find("td:last-child");
+								actionTd.html("<button data-save-button>Save</button>");
+							});
+
+							tBody.on("click", "button[data-save-button]", function(e) {
+
+								var car = scope.cars.filter(function(car) {
+									return car.id === rowId;
+								})[0];
+
+								var tr = $(e.target).closest("tr");
+
+								tr.find("td:not(:last-child)")
+									.each(function(index, td) {
+										td = $(td);
+										var fieldName = td.attr("col");
+										car[fieldName] = td.find("input").val();
+								});
+
+								ctrl.$setViewValue(scope.cars);
+
+							});
+
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.cars = [
+						{ id: 1, make: "Ford", model: "Taurus", year: 2003 },
+						{ id: 2, make: "Toyota", model: "Camry", year: 2014 },
+						{ id: 3, make: "Honda", model: "Accord", year: 2010 }
+					];
+
+				});
+
+		</script>
+	</body>
+</html>

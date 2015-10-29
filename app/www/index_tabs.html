@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<style>
+
+			.tabs ul {
+				list-style-type: none;
+			}
+
+			.tabs ul li {
+				display: inline-block;
+				border:2px solid black;
+				padding:5px;
+			}
+
+			.tabs li.active {
+				border:3px solid blue;
+			}
+
+			.tabs div {
+				border:3px solid blue;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				<tabs active-tab-id='tab2'>
+					<tab id="tab1" caption="Tab 1">Tab 1 Content</tab>
+					<tab id="tab2" caption="Tab 2">Tab 2 Content</tab>
+					<tab id="tab3" caption="Tab 3">Tab 3 Content</tab>
+					<tab id="tab4" caption="Tab 4">Tab 4 Content</tab>
+					<tab-external id="tab5" caption="Tab 5" contentUrl='tab.html'></tab-external>
+				</tabs>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.controller("tabCtrl", function($scope) {
+					this.addTab = function(tabId, tabCaption, tabContent) {
+						$scope.tabs.push({
+							tabId: tabId,
+							tabCaption: tabCaption,
+							tabContent: tabContent
+						});
+					};
+				})
+				.directive("tabs", function($compile) {
+
+					return {
+						restrict: "E",
+						controller: "tabCtrl",
+						compile: function(tElement, tAttrs) {
+
+							var tpl = `
+<div class='tabs'><ul><li ng-repeat='tab in tabs' ng-class='{active:tab.tabId === activeTabId}' ng-click='activateTab(tab.tabId)'>{{tab.tabCaption}}</li></ul>
+<div id='{{tab.tabId}}' ng-repeat='tab in tabs' ng-if='tab.tabId === activeTabId'>{{tab.tabContent}}</div></div>`;
+
+							return {
+								pre: function(scope, element, attrs) {
+									scope.tabs = [];
+									scope.activeTabId = attrs.activeTabId;
+									scope.activateTab = function(tabId) {
+										scope.activeTabId = tabId;
+									};
+								},
+								post: function(scope, element, attrs) {
+									element.empty().replaceWith($compile(tpl)(scope));
+								}
+							};
+						}
+					};
+
+				})
+				.directive("tab", function() {
+
+					return {
+						restrict: "E",
+						require: "^tabs",
+						link: function(scope, element, attrs, ctrl) {
+							ctrl.addTab(attrs.id, attrs.caption, element.html());
+						}
+					};
+
+				})
+				.directive("tabExternal", function() {
+
+					return {
+						restrict: "E",
+						require: "^tabs",
+						link: function(scope, element, attrs, ctrl) {
+							ctrl.addTab(attrs.id, attrs.caption, element.html());
+						}
+					}
+
+				})
+				.controller("MyCtrl", function($scope) {
+				});
+
+		</script>
+	</body>
+</html>

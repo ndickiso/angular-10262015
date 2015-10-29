@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+				Send Email: <input type="checkbox" ng-model="sendEmail">
+				<div ng-if="sendEmail">
+					<button on-click="send()">Send</button>
+				</div>
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.directive("button", function() {
+
+					return {
+						restrict: "E",
+						scope: {
+							onClick: "&"
+						},
+						link: function(scope, element, attrs) {
+							console.log(scope.$id);
+
+							function onClickHandler() {
+								scope.$apply(function() {
+									scope.onClick();
+								});
+							}
+
+							element.on("click", onClickHandler);
+
+							scope.$on("$destroy", function() {
+								element.off("click", onClickHandler);
+							});
+
+						}
+					};
+
+				})
+				.controller("MyCtrl", function($scope) {
+					$scope.send = function() {
+						console.log("sending");
+					};
+
+				});
+
+		</script>
+	</body>
+</html>
