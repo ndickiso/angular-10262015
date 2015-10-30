@@ -21,6 +21,8 @@
     "jquery": "~2.1.4",
     "angular": "~1.4.7",
     "angular-messages": "~1.4.7",
-    "angular-resource": "~1.4.7"
+    "angular-resource": "~1.4.7",
+    "q": "1.4.1",
+    "angular-mocks": "~1.4.7"
   }
 }

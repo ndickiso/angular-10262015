@@ -33160,6 +33160,23 @@ is set to `true`. The parse error is stored in `ngModel.$error.parse`.
 })(angular);
 
 (function(angular) {
+  controller.$inject = [ "$scope" ];
+  function controller($scope) {
+    $scope.message = "Home";
+  }
+  angular.module("MyApp.Controllers").controller("Home", controller);
+})(angular);
+
+(function(angular) {
+  controller.$inject = [ "WELCOME_MESSAGE", "$scope", "Second" ];
+  function controller(WELCOME_MESSAGE, $scope, Second) {
+    $scope.message = WELCOME_MESSAGE;
+    Second.log(WELCOME_MESSAGE);
+  }
+  angular.module("MyApp.Controllers").controller("MyCtrl", controller);
+})(angular);
+
+(function(angular) {
   parentCtrl.$inject = [ "$scope" ];
   function parentCtrl($scope) {
     $scope.o = {};

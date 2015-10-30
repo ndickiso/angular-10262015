@@ -9,80 +9,43 @@
 
 	<body>
 		<div ng-app="MyApp">
-			<div ng-controller="BrotherCtrl">
-				Brother: <input ng-model="message"
-					rc-model-change="triggerNewMessage(msg)">
-			</div>
-			<div ng-controller="SisterCtrl">
-				Sister: {{message}}
+			<div ng-controller="MyCtrl">
 			</div>
 		</div>
+
 		<script>
+
 			angular.module("MyApp", [])
-				.directive("rcModelChange", function() {
+				.controller("MyCtrl", function($q) {
 
-					return {
-						scope: {
-							triggerChange: "&rcModelChange"
-						},
-						require: "ngModel",
-						link: function(scope, element, attrs, ctrl) {
+					var d = $q.defer();
+					var promise = d.promise;
 
-							function notify(value) {
-								//scope[attrs.rcModelChange](value);
-								console.dir(scope.triggerChange);
-								scope.triggerChange({ msg: value });
-								return value;
-							}
+					promise.then(function(result) {
+						console.log("resolved");
+						console.log(result);
 
-							ctrl.$formatters.shift(notify);
-							ctrl.$parsers.push(notify);
+						var d2 = $q.defer();
 
-						}
-					};
+						setTimeout(function() {
+							d2.resolve();
+						}, 2000);
+						console.log("waiting for d2");
 
-				})
-				.factory("EventsChannel", function($rootScope) {
+						return d2.promise;
 
-					var events = [];
+					}).then(function(result) {
+						console.log("second resolve");
+					});
 
-					return {
-						on: function(eventName, eventHandler) {
-							if (!events[eventName]) {
-								events[eventName] = [];
-							}
-							events[eventName].push(eventHandler);
-						},
+					setTimeout(function() {
+						console.log("timeout expired");
+						d.resolve("unicorns and rainbows");
+					}, 2000);
+					console.log("waiting...");
 
-						trigger: function(eventName, eventData) {
-							if (events[eventName]) {
-								events[eventName].forEach(function(eventHandler) {
-									$rootScope.$applyAsync(function() {
-										eventHandler(eventData);
-									});
-								});
-							}
-						}
-					};
+				});
 
-				})
-				.controller("BrotherCtrl", ["$scope", "EventsChannel",
-					function($scope, EventsChannel) {
-
-						$scope.triggerNewMessage = function(newValue) {
-							EventsChannel.trigger("newMessage", newValue);
-						};
-
-
-					}])
-				.controller("SisterCtrl", ["$scope", "EventsChannel",
-					function($scope, EventsChannel) {
-
-						EventsChannel.on("newMessage", function(msg) {
-							$scope.message = msg;
-						})
-
-					}]);
 		</script>
 	</body>
 </html>

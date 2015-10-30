@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="BrotherCtrl">
+				Brother: <input ng-model="message"
+					rc-model-change="triggerNewMessage(msg)">
+			</div>
+			<div ng-controller="SisterCtrl">
+				Sister: {{message}}
+			</div>
+		</div>
+		<script>
+			angular.module("MyApp", [])
+				.directive("rcModelChange", function() {
+
+					return {
+						scope: {
+							triggerChange: "&rcModelChange"
+						},
+						require: "ngModel",
+						link: function(scope, element, attrs, ctrl) {
+
+							function notify(value) {
+								//scope[attrs.rcModelChange](value);
+								console.dir(scope.triggerChange);
+								scope.triggerChange({ msg: value });
+								return value;
+							}
+
+							ctrl.$formatters.shift(notify);
+							ctrl.$parsers.push(notify);
+
+						}
+					};
+
+				})
+				.factory("EventsChannel", function($rootScope) {
+
+					var events = [];
+
+					return {
+						on: function(eventName, eventHandler) {
+							if (!events[eventName]) {
+								events[eventName] = [];
+							}
+							events[eventName].push(eventHandler);
+						},
+
+						trigger: function(eventName, eventData) {
+							if (events[eventName]) {
+								events[eventName].forEach(function(eventHandler) {
+									$rootScope.$applyAsync(function() {
+										eventHandler(eventData);
+									});
+								});
+							}
+						}
+					};
+
+				})
+				.controller("BrotherCtrl", ["$scope", "EventsChannel",
+					function($scope, EventsChannel) {
+
+						$scope.triggerNewMessage = function(newValue) {
+							EventsChannel.trigger("newMessage", newValue);
+						};
+
+
+					}])
+				.controller("SisterCtrl", ["$scope", "EventsChannel",
+					function($scope, EventsChannel) {
+
+						EventsChannel.on("newMessage", function(msg) {
+							$scope.message = msg;
+						})
+
+					}]);
+		</script>
+	</body>
+</html>

@@ -16,13 +16,45 @@
 
 		<script>
 
-      var socket = io();
-
-			socket.emit("log", "test message");
-
 			angular.module("MyApp", [])
-				.controller("MyCtrl", function($scope) {
-					$scope.message = "A message";
+				.factory("SocketIO", function() {
+
+					var socket = io();
+
+					return {
+						log: function(msg) {
+							socket.emit("log", msg);
+						}
+					};
+
+				})
+				.config(function($provide) {
+
+					$provide.decorator("$log", function($delegate, SocketIO) {
+
+						var originalLog = $delegate.log;
+
+						$delegate.log = function(msg) {
+							SocketIO.log(msg);
+							originalLog(msg);
+						};
+
+
+
+						return $delegate;
+					});
+
+				})
+				.controller("MyCtrl", function($timeout, $interval, $log) {
+
+					var i = $interval(function() {
+						$log.log("logging a message");
+					}, 500);
+
+					$timeout(function() {
+						$interval.cancel(i);
+					}, 10000);
+
 				});
 
 		</script>

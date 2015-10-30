@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Angular.js Class</title>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-resource.js"></script>
+		<base href="/">
+	</head>
+
+	<body>
+
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", ["ngResource"])
+				.factory("WidgetData", function($http) {
+
+					return {
+						getAll : function() {
+							return $http.get("/svc/widgets");
+						},
+						"get": function(widgetId) {
+							return $http.get("/svc/widgets/" + encodeURIComponent(widgetId));
+						},
+						save: function(widget) {
+							if (widget.id) {
+								return $http.put("/svc/widgets/" + encodeURIComponent(widget.id), widget);
+							} else {
+								return $http.post("/svc/widgets", widget);
+							}
+						},
+						remove: function(widgetId) {
+							return $http.delete("/svc/widgets/" + encodeURIComponent(widgetId));
+						}
+					};
+
+
+				})
+				.factory("WidgetData2", function($resource) {
+
+					var Widgets = $resource('/svc/widgets/:widgetId', {
+						widgetId: "@id"
+					});
+
+					return {
+						getAll : function() {
+							return new Promise(function(resolve, reject) {
+								 Widgets.query(null, resolve, reject);
+							});
+						},
+						"get": function(widgetId) {
+							return new Promise(function(resolve, reject) {
+								 Widgets.get({
+									 widgetId: widgetId
+								 }, resolve, reject);
+							});
+						}
+					};
+
+
+				})
+				.controller("MyCtrl", ["WidgetData2", function(WidgetData) {
+
+					WidgetData.getAll().then(function(result) {
+						console.dir(result);
+					});
+
+					WidgetData.get(9).then(function(result) {
+
+						result.$delete().then(function() {
+							console.log("did I run...");
+						});
+					});
+
+					/*
+					WidgetData.get(4).then(function(result) {
+
+						var widget = result.data;
+						widget.quantity = 300;
+
+						return WidgetData.save(widget);
+
+					}).then(function(result) {
+
+						console.dir(result);
+
+						console.log("save was successful!");
+					})
+					.catch(function(err) {
+
+						console.log("an error occurred");
+
+					});
+
+
+					var widget = {
+						name: "Antibodies",
+						description: "Very nice antibodies...",
+						color: "yellow",
+						size: "very very small",
+						quantity: 40000
+					};
+
+					WidgetData.save(widget).then(function(result) {
+
+						//widget.id = result.data.widget_id;
+
+					});
+
+					WidgetData.remove(5);
+
+					*/
+
+
+
+
+				}]);
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+		<script src="libs/q/q.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.constant("WebSocketURL", "ws://localhost:8080")
+				//.value("WebSocketURL2", "ws://localhost:8080")
+				.factory("WebSocketLogger", function(WebSocketURL) {
+
+					var ws;
+
+					var p = new Promise(function(resolve, reject) {
+						ws = new WebSocket(WebSocketURL);
+						ws.addEventListener("open", function() {
+							resolve();
+						});
+					});
+
+					return {
+						log: function(msg) {
+							p.then(function() {
+								ws.send(msg);
+							});
+
+						}
+					};
+
+				})
+				.config(function($provide, WebSocketURL2) {
+
+					$provide.decorator("$log", function($delegate, WebSocketLogger) {
+						var originalLog = $delegate.log;
+						$delegate.log = function(msg) {
+							WebSocketLogger.log(msg);
+							originalLog(msg);
+						};
+						return $delegate;
+					});
+
+				})
+				.controller("MyCtrl", function($timeout, $interval, $log) {
+
+					var i = $interval(function() {
+						$log.log("logging a message");
+					}, 500);
+
+					$timeout(function() {
+						$interval.cancel(i);
+					}, 10000);
+
+				});
+
+		</script>
+	</body>
+</html>
