@@ -5,36 +5,40 @@
 		<title>Welcome to Angular.js</title>
 		<script src="libs/jquery/dist/jquery.js"></script>
 		<script src="libs/angular/angular.js"></script>
+		<script src="libs/angular-ui-router/release/angular-ui-router.js"></script>
 	</head>
 
 	<body>
 		<div ng-app="MyApp">
-			<div ng-controller="MyCtrl">
-				<table>
-					<thead>
-						<tr>
-							<td>Name</td>
-							<td>Color</td>
-							<td>Size</td>
-							<td>Quantity</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="widget in widgets">
-							<td>{{widget.name}}</td>
-							<td>{{widget.color}}</td>
-							<td>{{widget.size}}</td>
-							<td>{{widget.quantity}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+			<div ui-view></div>
 		</div>
 
 		<script>
 
-			angular.module("MyApp", [])
+			angular.module("MyApp", ["ui.router"])
 				.constant("WidgetsUrl", "/api/widgets")
+				.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+
+					$urlRouterProvider.otherwise("/");
+
+					$stateProvider
+						.state("home", {
+							url: "/",
+							controller: function(Widgets, $scope) {
+								Widgets.getAll().then(function(results) {
+									$scope.widgets = results.data;
+								});
+							},
+							templateUrl: "/tpl/widget_list.html"
+						})
+						.state("view", {
+							url: "/widgets/:widgetId",
+						})
+						.state("edit", {
+							url: "/widgets/:widgetId/edit",
+						});
+
+				})
 				.factory("Widgets", function($http, WidgetsUrl) {
 
 					return {
@@ -57,10 +61,6 @@
 								"/" + encodeURIComponent(widgetId));
 						}
 					}
-
-				})
-				.controller("MyCtrl", function($q, $timeout) {
-
 
 				});
 
