@@ -10,6 +10,24 @@
 	<body>
 		<div ng-app="MyApp">
 			<div ng-controller="MyCtrl">
+				<table>
+					<thead>
+						<tr>
+							<td>Name</td>
+							<td>Color</td>
+							<td>Size</td>
+							<td>Quantity</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="widget in widgets">
+							<td>{{widget.name}}</td>
+							<td>{{widget.color}}</td>
+							<td>{{widget.size}}</td>
+							<td>{{widget.quantity}}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 
