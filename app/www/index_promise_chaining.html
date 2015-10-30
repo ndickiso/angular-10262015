@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($q) {
+
+					var d = $q.defer();
+					var promise = d.promise;
+
+					promise.then(function(result) {
+						console.log("resolved");
+						console.log(result);
+
+						var d2 = $q.defer();
+
+						setTimeout(function() {
+							d2.resolve();
+						}, 2000);
+						console.log("waiting for d2");
+
+						return d2.promise;
+
+					}).then(function(result) {
+						console.log("second resolve");
+					});
+
+					setTimeout(function() {
+						console.log("timeout expired");
+						d.resolve("unicorns and rainbows");
+					}, 2000);
+					console.log("waiting...");
+
+				});
+
+		</script>
+	</body>
+</html>

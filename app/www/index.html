@@ -16,33 +16,33 @@
 		<script>
 
 			angular.module("MyApp", [])
-				.controller("MyCtrl", function($q) {
+				.constant("WidgetsUrl", "/api/widgets")
+				.factory("Widgets", function($http, WidgetsUrl) {
 
-					var d = $q.defer();
-					var promise = d.promise;
+					return {
+						getAll: function() {
+							return $http.get(WidgetsUrl);
+						},
+						get: function(widgetId) {
+							return $http.get(WidgetsUrl +
+								"/" + encodeURIComponent(widgetId));
+						},
+						create: function() {
+							return $http.post(WidgetsUrl, widget);
+						},
+						update: function(widget) {
+							return $http.put(WidgetsUrl +
+								"/" + encodeURIComponent(widget.id), widget);
+						},
+						delete: function(widgetId) {
+							return $http.delete(WidgetsUrl +
+								"/" + encodeURIComponent(widgetId));
+						}
+					}
 
-					promise.then(function(result) {
-						console.log("resolved");
-						console.log(result);
+				})
+				.controller("MyCtrl", function($q, $timeout) {
 
-						var d2 = $q.defer();
-
-						setTimeout(function() {
-							d2.resolve();
-						}, 2000);
-						console.log("waiting for d2");
-
-						return d2.promise;
-
-					}).then(function(result) {
-						console.log("second resolve");
-					});
-
-					setTimeout(function() {
-						console.log("timeout expired");
-						d.resolve("unicorns and rainbows");
-					}, 2000);
-					console.log("waiting...");
 
 				});
 

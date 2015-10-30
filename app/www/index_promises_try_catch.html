@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($q) {
+
+					var d = $q.defer();
+
+					d.promise.then(function() {
+						console.log("promise 1");
+						throw Error("an error occurred");
+					}).then(function() {
+						console.log("promise 2");
+					}).then(function() {
+						console.log("promise 3");
+					}).then(function() {
+						console.log("promise 4");
+					}).then(function() {
+						console.log("promise 5");
+					}).catch(function(err) {
+						console.log("catch: " + err);
+					}).finally(function() {
+						console.log("finally done");
+					});
+
+					setTimeout(function() {
+						d.resolve();
+					}, 2000);
+
+
+				});
+
+		</script>
+	</body>
+</html>

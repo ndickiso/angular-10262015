@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Welcome to Angular.js</title>
+		<script src="libs/jquery/dist/jquery.js"></script>
+		<script src="libs/angular/angular.js"></script>
+	</head>
+
+	<body>
+		<div ng-app="MyApp">
+			<div ng-controller="MyCtrl">
+			</div>
+		</div>
+
+		<script>
+
+			angular.module("MyApp", [])
+				.controller("MyCtrl", function($q, $timeout) {
+
+					var d = $q.defer();
+
+					d.promise.then(function() {
+						console.log("resolved");
+					}, null, function(result) {
+						console.log("I have been notified... " + result);
+					});
+
+					var x = 0;
+
+					var i = setInterval(function() {
+						d.notify(x++);
+					}, 500);
+
+					$timeout(function() {
+						window.clearInterval(i);
+						d.resolve();
+					}, 10000).then(function() {
+						console.log("timeout is all done!");
+					});
+
+				});
+
+		</script>
+	</body>
+</html>
