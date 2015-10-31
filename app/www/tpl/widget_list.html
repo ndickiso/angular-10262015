@@ -14,7 +14,9 @@
 			<td>{{widget.color}}</td>
 			<td>{{widget.size}}</td>
 			<td>{{widget.quantity}}</td>
-			<td><a href="#">View</a> <a href="#">Edit</a></td>
+			<td><a ui-sref="view({ widgetId: widget._id })">View</a>
+				<a ui-sref="edit({ widgetId: widget._id })">Edit</a></td>
 		</tr>
 	</tbody>
 </table>
+<button ng-click="createWidget()">Create Widget</button>

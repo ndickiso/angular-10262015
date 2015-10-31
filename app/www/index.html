@@ -3,9 +3,10 @@
 <html>
 	<head>
 		<title>Welcome to Angular.js</title>
-		<script src="libs/jquery/dist/jquery.js"></script>
-		<script src="libs/angular/angular.js"></script>
-		<script src="libs/angular-ui-router/release/angular-ui-router.js"></script>
+		<script src="/libs/jquery/dist/jquery.js"></script>
+		<script src="/libs/angular/angular.js"></script>
+		<script src="/libs/angular-ui-router/release/angular-ui-router.js"></script>
+		<base href="/">
 	</head>
 
 	<body>
@@ -20,22 +21,112 @@
 				.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 
 					$urlRouterProvider.otherwise("/");
+					$locationProvider.html5Mode(true);
 
 					$stateProvider
 						.state("home", {
 							url: "/",
-							controller: function(Widgets, $scope) {
-								Widgets.getAll().then(function(results) {
-									$scope.widgets = results.data;
-								});
+							controller: function($scope, $state, widgetsData) {
+
+								$scope.widgets = widgetsData
+
+								$scope.createWidget = function() {
+									$state.go("edit", { widgetId: null });
+								};
+
+								$scope.$on("$stateChangeError", function(e, msg) {
+									alert("Failed to change the view");
+								})
 							},
-							templateUrl: "/tpl/widget_list.html"
+							templateUrl: "/tpl/widget_list.html",
+							resolve: {
+								widgetsData: function(Widgets) {
+									return Widgets.getAll().then(function(results) {
+										return results.data;
+									});
+								}
+							}
 						})
 						.state("view", {
 							url: "/widgets/:widgetId",
+							controller: function($scope, $stateParams, $state, widgetData) {
+
+								$scope.widget = widgetData;
+
+								$scope.editWidget = function() {
+									$state.go("edit", {
+										widgetId: $scope.widget._id
+									});
+								};
+
+								$scope.returnToList = function() {
+									$state.go("home");
+								};
+							},
+							templateUrl: "/tpl/widget_view.html",
+							resolve: {
+								widgetData: function(Widgets, $stateParams) {
+									return Widgets.get($stateParams.widgetId).then(function(results) {
+										return results.data;
+									});
+								}
+							}
 						})
 						.state("edit", {
 							url: "/widgets/:widgetId/edit",
+							controller: function($scope, Widgets, $stateParams, $state) {
+
+								$scope.widget = {};
+								if ($stateParams.widgetId) {
+									Widgets.get($stateParams.widgetId).then(function(results) {
+										$scope.widget = results.data;
+									});
+								}
+
+								$scope.saveWidget = function() {
+									($scope.widget._id ?
+										Widgets.update($scope.widget) :
+										Widgets.insert($scope.widget)).then(function() {
+											$state.go("home");
+										});
+								};
+
+								$scope.deleteWidget = function() {
+									if (confirm("Are you really sure?")) {
+										if (confirm("Are you really really sure?")) {
+ 											Widgets.delete($scope.widget._id).then(function() {
+												$state.go("home");
+											});
+										}
+									}
+								};
+
+								$scope.returnToList = function() {
+									$state.go("home");
+								};
+
+							},
+							templateUrl: "/tpl/widget_edit.html"
+						})
+						.state("about", {
+							templateUrl: "/tpl/about.html"
+						})
+						.state("about.details", {
+							url: "/about",
+							views: {
+								history: {
+									templateUrl: "/tpl/history.html"
+								},
+								team: {
+									templateUrl: "/tpl/team.html"
+								},
+								mission: {
+									templateUrl: "/tpl/mission.html",
+									controller: function($scope) {
+										$scope.message = "Our mission is to...";
+									}
+								}
+							}
 						});
 
 				})
@@ -43,18 +134,20 @@
 
 					return {
 						getAll: function() {
-							return $http.get(WidgetsUrl);
+							return $http.get(WidgetsUrl).catch(function() {
+
+							});
 						},
 						get: function(widgetId) {
 							return $http.get(WidgetsUrl +
 								"/" + encodeURIComponent(widgetId));
 						},
-						create: function() {
+						insert: function(widget) {
 							return $http.post(WidgetsUrl, widget);
 						},
 						update: function(widget) {
 							return $http.put(WidgetsUrl +
-								"/" + encodeURIComponent(widget.id), widget);
+								"/" + encodeURIComponent(widget._id), widget);
 						},
 						delete: function(widgetId) {
 							return $http.delete(WidgetsUrl +
